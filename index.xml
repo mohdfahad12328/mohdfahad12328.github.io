@@ -3,9 +3,27 @@
         <title>Fahad&#39;s webpage</title>
         <link>https://mohdfahad12328.github.io/</link>
         <description>a place where we try out technologies</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 20 Jun 2023 09:59:10 &#43;0530</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 23 Jun 2023 03:28:48 &#43;0530</lastBuildDate>
             <atom:link href="https://mohdfahad12328.github.io/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>RISC-V Series</title>
+    <link>https://mohdfahad12328.github.io/posts/riscv-series/</link>
+    <pubDate>Fri, 23 Jun 2023 03:28:48 &#43;0530</pubDate>
+    <author>Author</author>
+    <guid>https://mohdfahad12328.github.io/posts/riscv-series/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/risc-v-logo.png" referrerpolicy="no-referrer">
+            </div><h2 id="what-is-going-on">what is going on?</h2>
+<p>As being a nerd about open source and CPU architecture, I&rsquo;ve decided
+to learn more about <code>riscv ISA</code> (Instruction Set Architecture) and
+try out making a <code>core</code> with it. In past I made my own 8bit ISA and
+implemented it on FPGA, but it feel now is time to try out bigger
+32bits turf and try adding some <code>AI Accelerators</code> as the finishing touch.
+I have basic knowledge of how CPU works and how to write Verilog, But
+I feel like I don&rsquo;t have enough experience in it. I just made a non
+pipelined CPU before, so this time plan of attack will be different.</p>]]></description>
+</item>
+<item>
     <title>My First Post</title>
     <link>https://mohdfahad12328.github.io/posts/my-first-post/</link>
     <pubDate>Tue, 20 Jun 2023 09:59:10 &#43;0530</pubDate>
