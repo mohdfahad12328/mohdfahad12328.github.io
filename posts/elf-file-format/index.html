@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>ELF File Format - Fahad&#39;s webpage</title><meta name="Description" content="a place where we try out technologies"><meta property="og:title" content="ELF File Format" />
+<meta property="og:description" content="What is a Program and How does it run on CPU? Program is a mix of code and data that makes the CPU do what we want, aka super powers.
+Sadly CPU only speaks Zeros and Ones that what all people say 🤷‍♂️, but the real language that we can talk to CPU still being able to keep our sanity is Instruction Set.
+Ahh, sorry for the deviation.
+So yeah zeros and ones." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://mohdfahad12328.github.io/posts/elf-file-format/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-06-26T23:17:41+05:30" />
+<meta property="article:modified_time" content="2023-06-26T23:17:41+05:30" /><meta property="og:site_name" content="Fahad&#39;s webpage" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ELF File Format"/>
+<meta name="twitter:description" content="What is a Program and How does it run on CPU? Program is a mix of code and data that makes the CPU do what we want, aka super powers.
+Sadly CPU only speaks Zeros and Ones that what all people say 🤷‍♂️, but the real language that we can talk to CPU still being able to keep our sanity is Instruction Set.
+Ahh, sorry for the deviation.
+So yeah zeros and ones."/>
+<meta name="application-name" content="Fahad&#39;s webpage">
+<meta name="apple-mobile-web-app-title" content="Fahad&#39;s webpage"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://mohdfahad12328.github.io/posts/elf-file-format/" /><link rel="prev" href="https://mohdfahad12328.github.io/posts/riscv-series/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "ELF File Format",
+        "inLanguage": "en-us",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/mohdfahad12328.github.io\/posts\/elf-file-format\/"
+        },"genre": "posts","wordcount":  1362 ,
+        "url": "https:\/\/mohdfahad12328.github.io\/posts\/elf-file-format\/","datePublished": "2023-06-26T23:17:41+05:30","dateModified": "2023-06-26T23:17:41+05:30","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Fahad&#39;s webpage">Fahad&#39;s Webpage</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Fahad&#39;s webpage">Fahad&#39;s Webpage</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">ELF File Format</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2023-06-26">2023-06-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1362 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;7 minutes&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/elf-file-format/elf-file-format-feature-img.png"
+        data-srcset="/elf-file-format/elf-file-format-feature-img.png, /elf-file-format/elf-file-format-feature-img.png 1.5x, /elf-file-format/elf-file-format-feature-img.png 2x"
+        data-sizes="auto"
+        alt="/elf-file-format/elf-file-format-feature-img.png"
+        title="/elf-file-format/elf-file-format-feature-img.png" /></div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#what-is-a-program-and-how-does-it-run-on-cpu">What is a Program and How does it run on CPU?</a></li>
+    <li><a href="#what-are-elf-files-and-where-do-we-see-them">What are ELF Files and Where do we See Them?</a></li>
+    <li><a href="#what-is-in-elf-file">What is in ELF File?</a>
+      <ul>
+        <li><a href="#what-is-segment-and-section-">What is Segment And Section ?</a></li>
+      </ul>
+    </li>
+    <li><a href="#how-are-elf-files-strucutured">How are ELF Files Strucutured?</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="what-is-a-program-and-how-does-it-run-on-cpu">What is a Program and How does it run on CPU?</h2>
+<p>Program is a mix of code and data that makes the CPU do what we want, aka super powers.</p>
+<p>Sadly CPU only speaks <em><strong>Zeros and Ones</strong></em> that what all people say 🤷‍♂️, but
+the real language that we can talk to CPU still being able to keep our sanity is <em><strong>Instruction Set</strong></em>.</p>
+<p>Ahh, sorry for the deviation.</p>
+<p>So yeah zeros and ones.. we need to store them somewhere, thats where <em><strong>Memory</strong></em> kicks in.</p>
+<p>Memory can be devices such as Hard Disk, DDR, Floppy Disks, Pen Drives, SD Cards and even Puch Holes Cards.. yep those
+too.
+Generally Modern system uses RAM i.e Random Access Memory to execute the program from.
+Now CPU goes through all those ones and zeros one after another and does magic as we expect it to do.</p>
+<p>Thats it, thats how stupid, i mean simple the CPU is.</p>
+<p>Now how to load that program in memory? we can&rsquo;t just say
+here is the code and data, run this. Yes we can do that but thats not secure and flexible enough when we
+an OS comes into picture and wants to run many programs at same time aka super power++.</p>
+<p>OS manages memory of each program seperately so programs dont change other programs&hellip; I thought it was cool to
+change one program from another program.
+Then i thought, if a program from random internet site got into my anime player and shown isekai, it would be disasterous.
+So safety is a big priority in OSs.</p>
+<p>We still want a format where we can say where code should go, where data should go but let the OS take care of loading it in memory and making sure it runs.</p>
+<p>One of those format is ELF. Those ELF formated programs in form of Files are called ELF files.</p>
+<h2 id="what-are-elf-files-and-where-do-we-see-them">What are ELF Files and Where do we See Them?</h2>
+<p>ELF files are files which contains code and data in binary, but with additional information about how these two has to placed in memory, for the program to run by CPU. Those programs we run in linux or BSD like ls, cat, touch, mkdir and even those sketchy ones we download from internet, most probably are ELF files.</p>
+<p>From high-end linux servers used in cloud to gaming console such as play stations and even the cheap MCUs. All of them us
+e ELF files to run the programs.</p>
+<p>I forgot to tell the full form btw, its <code>Executable and Linkable Format</code>(formerly named Extensible Linking Format).
+It was chosen by the <code>grandad of OSs.. UNIX</code> as standard binary file format for programs.</p>
+<p>Its very flexible and extensible and blah blah&hellip; but the feautre I like the most is that, it doesn&rsquo;t care what CPU are
+you runing it on. Its not like ELF files are only for x86 or ARM or RISV, or even LINUX or UNIX likes. The same format
+works every where its supported, btw if you go to wiki page you will know there a lot of things that support it.</p>
+<h2 id="what-is-in-elf-file">What is in ELF File?</h2>
+<p>Lets take the example of <code>cat</code> program.
+<div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw" aria-hidden="true"></i>Note<i class="details-icon fas fa-angle-right fa-fw" aria-hidden="true"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><code>cat</code> is a program which lets see the contents of file.
+for example <code>hello.txt</code> has <code>hello from txt file</code> in it. then</div>
+        </div>
+    </div></p>
+<figure><img src="/elf-file-format/cat-example.png"/>
+</figure>
+
+<p>Lets hexdump it.
+<div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw" aria-hidden="true"></i>Note<i class="details-icon fas fa-angle-right fa-fw" aria-hidden="true"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">hexdump is a tool to see the binary data in a file.</div>
+        </div>
+    </div></p>
+<figure><img src="/elf-file-format/hexdump.png"/>
+</figure>
+
+<p>Not much we can understand right here. Lets tell hexdump to show if it sees any know ascii charcters values in file</p>
+<figure><img src="/elf-file-format/hexdump-canonical.png"/>
+</figure>
+
+<p>We find something intresting on first 4 bytes of this program, it says <strong><code>.ELF</code></strong>. This is the standard for ELF files to start with .ELF
+and its called ELF identifier. not only cat, many other programs start with .ELF.</p>
+<p>Btw hexdump is also a program so it should also contain .ELF in starting.</p>
+<figure><img src="/elf-file-format/hexdump-hexdump.png"/>
+</figure>
+
+<p>So what are those bits after .ELF you may ask, they are the information of the program. Like</p>
+<ul>
+<li>which CPU can run this program.</li>
+<li>what type of program this is.</li>
+<li>from where on this file CPU should start executing.</li>
+<li>which parts of this file should be loaded into memory.</li>
+<li>how many memory loadable parts are there. etc..</li>
+</ul>
+<p>All these info are stored at starting of File called as <em><strong>Header</strong></em>.
+Before diving into the fields of the header we need to know two important words <em><strong>Segment and Section</strong></em>.</p>
+<h3 id="what-is-segment-and-section-">What is Segment And Section ?</h3>
+<p>We can simply say segment is a the part of the file which is to be loaded in memory for execution aka program code and data.
+So section becomes the part which is additional information about a the code and data that is used while relocating the program.</p>
+<p>yep thats confusing. here are some points which will help in us understanding better (ofc got these from <a href="https://stackoverflow.com/questions/14361248/whats-the-difference-of-section-and-segment-in-elf-file-format" target="_blank" rel="noopener noreffer ">stackoverflow</a>).</p>
+<ul>
+<li>
+<p>segments contain information that is necessary for runtime execution, while sections for linking an relocation</p>
+</li>
+<li>
+<p>section: tell the linker if a section is either:</p>
+<ul>
+<li>raw data to be loaded into memory, e.g. .data, .text, etc.</li>
+<li>or formatted metadata about other sections, that will be used by the linker, but disappear at runtime e.g. .symtab, .srttab, .rela.text</li>
+</ul>
+</li>
+<li>
+<p>segment: tells the operating system:</p>
+<ul>
+<li>where should a segment be loaded into virtual memory</li>
+<li>what permissions the segments have (read, write, execute). Remember that this can be efficiently enforced by the processor.</li>
+</ul>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://i.stack.imgur.com/RMV0g.png"
+        data-srcset="https://i.stack.imgur.com/RMV0g.png, https://i.stack.imgur.com/RMV0g.png 1.5x, https://i.stack.imgur.com/RMV0g.png 2x"
+        data-sizes="auto"
+        alt="https://i.stack.imgur.com/RMV0g.png"
+        title="https://i.stack.imgur.com/RMV0g.png" /></p>
+</li>
+</ul>
+<p>Now we know what section and segment is. ELF headers contains the information about where these sections and segments are located in file.</p>
+<p>So finally we can say ELF files contains header, sections and segments.</p>
+<h2 id="how-are-elf-files-strucutured">How are ELF Files Strucutured?</h2>
+<p>Now we need to know all the fields of the ELF files, it will take forever for me to write it down and its boring to read them all.
+So i suggest you to watch a <a href="https://www.youtube.com/watch?v=nC1U1LJQL8o" target="_blank" rel="noopener noreffer ">youtube video</a> where the explaination is great and read
+<a href="https://refspecs.linuxfoundation.org/elf/elf.pdf" target="_blank" rel="noopener noreffer ">linux reference specification</a> for further understanding.</p>
+<p>After watching the video go through the code below I wrote for getting the loadable segments in memeory.
+Try to understand how it works in code and its in <em><strong>C</strong></em>.</p>
+<p><strong>The best programming language bestowed upon us by gods, C</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">uint16_t</span> HalfWord;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">uint32_t</span> Word;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">uint32_t</span> Address;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">uint32_t</span> Offset;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define EI_NIDENT 16
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> e_ident[EI_NIDENT];
+</span></span><span style="display:flex;"><span>  HalfWord  e_type;
+</span></span><span style="display:flex;"><span>  HalfWord  e_machine;
+</span></span><span style="display:flex;"><span>  Word      e_version;
+</span></span><span style="display:flex;"><span>  Address   e_entry;
+</span></span><span style="display:flex;"><span>  Offset    e_phoff;
+</span></span><span style="display:flex;"><span>  Offset    e_shoff;
+</span></span><span style="display:flex;"><span>  Word      e_flags;
+</span></span><span style="display:flex;"><span>  HalfWord  e_ehsize;
+</span></span><span style="display:flex;"><span>  HalfWord  e_phentsize;
+</span></span><span style="display:flex;"><span>  HalfWord  e_phnum;
+</span></span><span style="display:flex;"><span>  HalfWord  e_shentsize;
+</span></span><span style="display:flex;"><span>  HalfWord  e_shnum;
+</span></span><span style="display:flex;"><span>  HalfWord  e_shstrndx;
+</span></span><span style="display:flex;"><span>} ElfHeader;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  Word	    p_type;
+</span></span><span style="display:flex;"><span>  Offset	p_offset;
+</span></span><span style="display:flex;"><span>  Address	p_vaddr;
+</span></span><span style="display:flex;"><span>  Address	p_paddr;
+</span></span><span style="display:flex;"><span>  Word   	p_filesz;
+</span></span><span style="display:flex;"><span>  Word  	p_memsz;
+</span></span><span style="display:flex;"><span>  Word  	p_flags;
+</span></span><span style="display:flex;"><span>  Word  	p_align;
+</span></span><span style="display:flex;"><span>} ElfPhdr;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  Word  	sh_name;
+</span></span><span style="display:flex;"><span>  Word  	sh_type;
+</span></span><span style="display:flex;"><span>  Word  	sh_flags;
+</span></span><span style="display:flex;"><span>  Address	sh_addr;
+</span></span><span style="display:flex;"><span>  Offset	sh_offset;
+</span></span><span style="display:flex;"><span>  Word  	sh_size;
+</span></span><span style="display:flex;"><span>  Word  	sh_link;
+</span></span><span style="display:flex;"><span>  Word  	sh_info;
+</span></span><span style="display:flex;"><span>  Word  	sh_addralign;
+</span></span><span style="display:flex;"><span>  Word  	sh_entsize;
+</span></span><span style="display:flex;"><span>} ElfShdr;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">enum</span> {
+</span></span><span style="display:flex;"><span>  SEG_READ <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x4</span>,
+</span></span><span style="display:flex;"><span>  SEG_WRITE <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x2</span>,
+</span></span><span style="display:flex;"><span>  SEG_READ_AND_WRITE <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x6</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* more options exist but for now we arent 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  concerned about them
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">   SEG_EXECUTE */</span>
+</span></span><span style="display:flex;"><span>}SegFlags;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">uint32_t</span> addr;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">uint32_t</span> size;
+</span></span><span style="display:flex;"><span>  SegFlags flag;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">uint8_t</span><span style="color:#f92672">*</span> mem_arr;
+</span></span><span style="display:flex;"><span>} MemSegment;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>  MemSegment <span style="color:#f92672">**</span>listSegs;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">int</span> nSegs;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">uint32_t</span> enrtyPointAddr;
+</span></span><span style="display:flex;"><span>} Memory;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Memory<span style="color:#f92672">*</span> <span style="color:#a6e22e">MemoryGetFromProg</span>(<span style="color:#66d9ef">uint8_t</span> <span style="color:#f92672">*</span>program) {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* extracting the ELF header */</span>
+</span></span><span style="display:flex;"><span>  ElfHeader<span style="color:#f92672">*</span> hdr <span style="color:#f92672">=</span> (ElfHeader<span style="color:#f92672">*</span>)program; 
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* init ELF program header list */</span>
+</span></span><span style="display:flex;"><span>  ElfPhdr<span style="color:#f92672">*</span> phdrList[hdr<span style="color:#f92672">-&gt;</span>e_phnum];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* init Memory struct */</span>
+</span></span><span style="display:flex;"><span>  Memory<span style="color:#f92672">*</span> mem <span style="color:#f92672">=</span> (Memory<span style="color:#f92672">*</span>)malloc(<span style="color:#66d9ef">sizeof</span>(Memory));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* finding the number of loadable segments */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">int</span> t <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> (size_t i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> hdr<span style="color:#f92672">-&gt;</span>e_phnum; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>    phdrList[i] <span style="color:#f92672">=</span> (ElfPhdr<span style="color:#f92672">*</span>)(program <span style="color:#f92672">+</span> hdr<span style="color:#f92672">-&gt;</span>e_phoff <span style="color:#f92672">+</span> (i <span style="color:#f92672">*</span> hdr<span style="color:#f92672">-&gt;</span>e_phentsize)); 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (phdrList[i]<span style="color:#f92672">-&gt;</span>p_type <span style="color:#f92672">==</span> <span style="color:#ae81ff">0x01</span> ) { <span style="color:#75715e">/* Load type p_type == 1 */</span>
+</span></span><span style="display:flex;"><span>      t<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (t <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>    printf(<span style="color:#e6db74">&#34;error: there is no loadable segment in program</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* init the memory segments list that are loadable */</span>
+</span></span><span style="display:flex;"><span>  mem<span style="color:#f92672">-&gt;</span>listSegs <span style="color:#f92672">=</span> (MemSegment<span style="color:#f92672">**</span>)malloc(t <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(MemSegment<span style="color:#f92672">*</span>));
+</span></span><span style="display:flex;"><span>  mem<span style="color:#f92672">-&gt;</span>nSegs <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>  mem<span style="color:#f92672">-&gt;</span>enrtyPointAddr <span style="color:#f92672">=</span> hdr<span style="color:#f92672">-&gt;</span>e_entry;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* extracting the data to be loaded in memory */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> (size_t i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> hdr<span style="color:#f92672">-&gt;</span>e_phnum; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (phdrList[i]<span style="color:#f92672">-&gt;</span>p_type <span style="color:#f92672">==</span> <span style="color:#ae81ff">0x01</span> ) { <span style="color:#75715e">/* Load type p_type == 1 */</span>
+</span></span><span style="display:flex;"><span>      mem<span style="color:#f92672">-&gt;</span>listSegs[mem<span style="color:#f92672">-&gt;</span>nSegs] <span style="color:#f92672">=</span> (MemSegment<span style="color:#f92672">*</span>)malloc(<span style="color:#66d9ef">sizeof</span>(MemSegment));
+</span></span><span style="display:flex;"><span>      mem<span style="color:#f92672">-&gt;</span>listSegs[mem<span style="color:#f92672">-&gt;</span>nSegs]<span style="color:#f92672">-&gt;</span>addr <span style="color:#f92672">=</span> phdrList[i]<span style="color:#f92672">-&gt;</span>p_vaddr;
+</span></span><span style="display:flex;"><span>      mem<span style="color:#f92672">-&gt;</span>listSegs[mem<span style="color:#f92672">-&gt;</span>nSegs]<span style="color:#f92672">-&gt;</span>size <span style="color:#f92672">=</span> phdrList[i]<span style="color:#f92672">-&gt;</span>p_memsz;
+</span></span><span style="display:flex;"><span>      mem<span style="color:#f92672">-&gt;</span>listSegs[mem<span style="color:#f92672">-&gt;</span>nSegs]<span style="color:#f92672">-&gt;</span>mem_arr <span style="color:#f92672">=</span> (program<span style="color:#f92672">+</span>phdrList[i]<span style="color:#f92672">-&gt;</span>p_offset);
+</span></span><span style="display:flex;"><span>      mem<span style="color:#f92672">-&gt;</span>listSegs[mem<span style="color:#f92672">-&gt;</span>nSegs]<span style="color:#f92672">-&gt;</span>flag <span style="color:#f92672">=</span> phdrList[i]<span style="color:#f92672">-&gt;</span>p_flags;
+</span></span><span style="display:flex;"><span>      mem<span style="color:#f92672">-&gt;</span>nSegs<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> mem;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="conclusion">Conclusion</h2>
+<p>Hope you now understand a little more about how you programs work and got you little more intrigued about how our computer work.</p>
+<p>Have a great day.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2023-06-26</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://mohdfahad12328.github.io/posts/elf-file-format/" data-title="ELF File Format"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://mohdfahad12328.github.io/posts/elf-file-format/"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://mohdfahad12328.github.io/posts/elf-file-format/" data-title="ELF File Format"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://mohdfahad12328.github.io/posts/elf-file-format/" data-title="ELF File Format"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://mohdfahad12328.github.io/posts/elf-file-format/" data-title="ELF File Format" data-image="/elf-file-format/elf-file-format-feature-img.png"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/riscv-series/" class="prev" rel="prev" title="RISC-V Series"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>RISC-V Series</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.112.3">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"twemoji":true};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
