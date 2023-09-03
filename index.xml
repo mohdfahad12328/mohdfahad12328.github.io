@@ -3,9 +3,20 @@
         <title>Fahad&#39;s webpage</title>
         <link>https://mohdfahad12328.github.io/</link>
         <description>a place where we try out technologies</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 26 Jun 2023 23:17:41 &#43;0530</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 28 Aug 2023 18:58:50 &#43;0530</lastBuildDate>
             <atom:link href="https://mohdfahad12328.github.io/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>How Are We Able to Run Multiple Apps at Once?</title>
+    <link>https://mohdfahad12328.github.io/posts/how-are-we-able-to-run-multiple-apps-at-once/</link>
+    <pubDate>Mon, 28 Aug 2023 18:58:50 &#43;0530</pubDate>
+    <author>Author</author>
+    <guid>https://mohdfahad12328.github.io/posts/how-are-we-able-to-run-multiple-apps-at-once/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/how-are-we-able-to-run-multiple-apps-at-once/sc.png" referrerpolicy="no-referrer">
+            </div>Hello everyone, yeah its been one week since my last post, as expected.
+Interview So today&rsquo;s question is How are we able to run multiple apps at once in our computer? You may say, just open whatever you want and be done with it. That&rsquo;s true, but how?. Let me expand the question, suppose we are in early 2000s, you just got your single core Pentium 4 computer with windows XP on it.]]></description>
+</item>
+<item>
     <title>ELF File Format</title>
     <link>https://mohdfahad12328.github.io/posts/elf-file-format/</link>
     <pubDate>Mon, 26 Jun 2023 23:17:41 &#43;0530</pubDate>
